@@ -1,4 +1,27 @@
 const { useState } = React;
+
+// New Icons for Shot Shapes
+const CornerRightUp = () => React.createElement('svg', {
+    width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
+}, React.createElement('path', { d: 'M10 14L15 9L20 14' }), React.createElement('path', { d: 'M4 4H11V11' }));
+
+const CornerLeftUp = () => React.createElement('svg', {
+    width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
+}, React.createElement('path', { d: 'M14 14L9 9L4 14' }), React.createElement('path', { d: 'M20 4H13V11' }));
+
+const ArrowRight = () => React.createElement('svg', {
+    width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
+}, React.createElement('path', { d: 'm12 5 7 7-7 7' }), React.createElement('path', { d: 'M5 12h14' }));
+
+const ChevronsRight = () => React.createElement('svg', {
+    width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
+}, React.createElement('path', { d: 'm13 17 5-5-5-5' }), React.createElement('path', { d: 'm6 17 5-5-5-5' }));
+
+const ChevronsDown = () => React.createElement('svg', {
+    width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
+}, React.createElement('path', { d: 'm7 6 5 5 5-5' }), React.createElement('path', { d: 'm7 13 5 5 5-5' }));
+
+// Existing Icons
 const TreePine = () => React.createElement('svg', {
     width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
 }, React.createElement('path', { d: 'm17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z' }), React.createElement('path', { d: 'M12 22V12' }));
@@ -153,6 +176,80 @@ const liesDB = {
       color: 'purple',
       description: 'Ball lower than your feet'
     }
+  },
+  shot_shapes: {
+    high_fade: {
+      id: 'high_fade',
+      name: 'High Fade',
+      type: 'shot_shape',
+      difficulty_score: 5,
+      icon: CornerRightUp,
+      color: 'pink',
+      description: 'Ball starts straight, curves gently right, lands soft with spin'
+    },
+    high_draw: {
+      id: 'high_draw',
+      name: 'High Draw',
+      type: 'shot_shape',
+      difficulty_score: 5,
+      icon: CornerLeftUp,
+      color: 'teal',
+      description: 'Ball starts straight, curves gently left, gains extra distance'
+    },
+    hook: {
+      id: 'hook',
+      name: 'Hook',
+      type: 'shot_shape',
+      difficulty_score: 7,
+      icon: ArrowLeft,
+      color: 'rose',
+      description: 'Ball curves sharply left, useful for working around obstacles'
+    },
+    slice: {
+      id: 'slice',
+      name: 'Slice',
+      type: 'shot_shape',
+      difficulty_score: 7,
+      icon: ArrowRight,
+      color: 'fuchsia',
+      description: 'Ball curves sharply right with shorter flight (usually unintentional)'
+    },
+    knockdown: {
+      id: 'knockdown',
+      name: 'Knockdown',
+      type: 'shot_shape',
+      difficulty_score: 6,
+      icon: ArrowDown,
+      color: 'lime',
+      description: 'Low penetrating flight that cuts through wind'
+    },
+    flop_shot: {
+      id: 'flop_shot',
+      name: 'Flop Shot',
+      type: 'shot_shape',
+      difficulty_score: 8,
+      icon: ArrowUp,
+      color: 'sky',
+      description: 'High arcing shot that lands softly with minimal roll'
+    },
+    bump_run: {
+      id: 'bump_run',
+      name: 'Bump & Run',
+      type: 'shot_shape',
+      difficulty_score: 3,
+      icon: ChevronsRight,
+      color: 'violet',
+      description: 'Low running shot that bounces and rolls toward target'
+    },
+    punch_shot: {
+      id: 'punch_shot',
+      name: 'Punch Shot',
+      type: 'shot_shape',
+      difficulty_score: 4,
+      icon: ChevronsDown,
+      color: 'emerald',
+      description: 'Low controlled escape shot to get back in play from trouble'
+    }
   }
 };
 
@@ -254,6 +351,87 @@ const adviceDB = {
       club: "Aim left of target, consider one club more",
       expected: "Ball curves left-to-right, slightly reduced distance"
     }
+  },
+  // Shot Shape advice
+  high_fade: {
+    intermediate: {
+      setup: "Align feet slightly left of target, create open stance",
+      grip: "Weaken grip by turning hands left, lighten pressure",
+      ball: "Position in center of stance for balanced contact",
+      swing: "Cut across ball at impact, maintain open clubface through finish",
+      best_for: "Approach shots, stopping ball quickly on greens",
+      description: "Ball starts straight, curves gently right, lands soft with spin"
+    }
+  },
+  high_draw: {
+    intermediate: {
+      setup: "Move ball position closer to left foot in stance",
+      grip: "Strengthen grip by rotating right hand over left",
+      swing: "Create shallower swing plane, inside-to-out path",
+      feel: "Release hands naturally, let clubface close smoothly",
+      best_for: "Tee shots for distance, long iron approaches",
+      description: "Ball starts straight, curves gently left, gains extra distance"
+    }
+  },
+  hook: {
+    intermediate: {
+      setup: "Position ball well forward near left foot",
+      grip: "Very strong grip - close right hand significantly over left",
+      swing: "Take club back on pronounced inside path",
+      feel: "Wrap club around body on backswing and through impact",
+      best_for: "Getting around trees, severe doglegs left",
+      description: "Ball curves sharply left, useful for working around obstacles"
+    }
+  },
+  slice: {
+    intermediate: {
+      setup: "Open stance with feet aimed left of target",
+      grip: "Very weak grip - hands rotated well left on handle",
+      swing: "Outside-to-in swing path across the ball",
+      feel: "Lead wrist stays extended through impact, clubface open",
+      best_for: "Severe doglegs right, working around right-side obstacles",
+      description: "Ball curves sharply right with shorter flight (usually unintentional)"
+    }
+  },
+  knockdown: {
+    intermediate: {
+      setup: "Shift weight to left foot, move ball back in stance",
+      club: "Choose one less loft than normal distance requires",
+      swing: "Three-quarter backswing with controlled tempo",
+      follow: "Keep finish low and abbreviated, punch through ball",
+      best_for: "Windy conditions, staying under tree branches",
+      description: "Low penetrating flight that cuts through wind"
+    }
+  },
+  flop_shot: {
+    intermediate: {
+      setup: "Wide stance with feet well apart, ball near left foot",
+      grip: "Open clubface significantly before taking grip",
+      club: "Use lob wedge or sand wedge for maximum loft",
+      swing: "Make full swing with slow, smooth tempo throughout",
+      best_for: "Short-sided pins, clearing bunkers close to target",
+      description: "High arcing shot that lands softly with minimal roll"
+    }
+  },
+  bump_run: {
+    intermediate: {
+      setup: "Narrow stance, choke down on grip for control",
+      ball: "Position back in stance for downward strike",
+      swing: "Minimal wrist hinge, half or quarter swing length",
+      club: "Can use any club - 7-iron through pitching wedge common",
+      best_for: "Just off green, firm conditions, simple approach",
+      description: "Low running shot that bounces and rolls toward target"
+    }
+  },
+  punch_shot: {
+    intermediate: {
+      setup: "Narrow stance with feet close together, ball back",
+      swing: "Shortened backswing, focus on hitting down on ball",
+      follow: "Abbreviated finish, keep hands ahead of clubhead",
+      feel: "Punch down and through with authority, no scooping",
+      best_for: "Under trees, from rough, getting back to fairway",
+      description: "Low controlled escape shot to get back in play from trouble"
+    }
   }
 };
 
@@ -277,6 +455,7 @@ const dbQueries = {
   getLie: (id, type) => {
     if (type === 'surface') return liesDB.surfaces[id];
     if (type === 'slope') return liesDB.slopes[id];
+    if (type === 'shot_shape') return liesDB.shot_shapes[id];
     return null;
   },
   
@@ -303,12 +482,14 @@ const dbQueries = {
   },
   
   getAllSurfaces: () => Object.values(liesDB.surfaces),
-  getAllSlopes: () => Object.values(liesDB.slopes)
+  getAllSlopes: () => Object.values(liesDB.slopes),
+  getAllShotShapes: () => Object.values(liesDB.shot_shapes)
 };
 
 const QuickCaddieApp = () => {
   const [currentView, setCurrentView] = useState('home');
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedLie, setSelectedLie] = useState(null); // Unified state for selected lie
   const [selectedSurface, setSelectedSurface] = useState(null);
   const [selectedSlope, setSelectedSlope] = useState(null);
   const [comboStep, setComboStep] = useState('surface');
@@ -327,7 +508,14 @@ const QuickCaddieApp = () => {
       blue: 'bg-blue-100 text-blue-600',
       indigo: 'bg-indigo-100 text-indigo-600',
       cyan: 'bg-cyan-100 text-cyan-600',
-      purple: 'bg-purple-100 text-purple-600'
+      purple: 'bg-purple-100 text-purple-600',
+      pink: 'bg-pink-100 text-pink-600', // New color for shot shapes
+      teal: 'bg-teal-100 text-teal-600', // New color for shot shapes
+      rose: 'bg-rose-100 text-rose-600', // New color for shot shapes
+      fuchsia: 'bg-fuchsia-100 text-fuchsia-600', // New color for shot shapes
+      lime: 'bg-lime-100 text-lime-600', // New color for shot shapes
+      sky: 'bg-sky-100 text-sky-600', // New color for shot shapes
+      violet: 'bg-violet-100 text-violet-600' // New color for shot shapes
     };
     return colorClasses[color] || 'bg-gray-100 text-gray-600';
   };
@@ -336,6 +524,7 @@ const QuickCaddieApp = () => {
   const goHome = () => {
     setCurrentView('home');
     setSelectedCategory(null);
+    setSelectedLie(null);
     setSelectedSurface(null);
     setSelectedSlope(null);
     setComboStep('surface');
@@ -346,19 +535,17 @@ const QuickCaddieApp = () => {
     if (category === 'combo') {
       setCurrentView('combo-surface');
       setComboStep('surface');
-    } else {
+    } else if (category === 'shot_shape') {
+      setCurrentView('shot-shape-category');
+    }
+    else {
       setCurrentView('category');
     }
   };
 
   const selectLie = (lie) => {
-    if (selectedCategory === 'surface') {
-      setSelectedSurface(lie);
-      setCurrentView('result');
-    } else if (selectedCategory === 'slope') {
-      setSelectedSlope(lie);
-      setCurrentView('result');
-    }
+    setSelectedLie(lie); // Set the unified selected lie
+    setCurrentView('result');
   };
 
   const selectComboSurface = (surface) => {
@@ -390,8 +577,8 @@ const QuickCaddieApp = () => {
         <p className="text-white/80">Select a category to get started</p>
       </div>
 
-      {/* Categories */}
-      <div className="px-6 space-y-4 pb-8">
+      {/* Categories - now a 2x2 grid */}
+      <div className="px-6 pb-8 grid grid-cols-1 md:grid-cols-2 gap-4"> {/* Changed to grid */}
         <button
           onClick={() => selectCategory('surface')}
           className="w-full bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
@@ -424,6 +611,25 @@ const QuickCaddieApp = () => {
                 <h3 className="text-xl font-semibold text-gray-800">Slope</h3>
                 <p className="text-gray-600">Uphill, downhill, and sidehill positions</p>
                 <p className="text-sm text-gray-500">4 options</p>
+              </div>
+            </div>
+            <ChevronRight className="w-6 h-6 text-gray-400" />
+          </div>
+        </button>
+
+        <button
+          onClick={() => selectCategory('shot_shape')}
+          className="w-full bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="bg-purple-100 rounded-full w-12 h-12 flex items-center justify-center">
+                <Target className="w-6 h-6 text-purple-600" /> {/* Using Target for now */}
+              </div>
+              <div className="text-left">
+                <h3 className="text-xl font-semibold text-gray-800">Shot Shape</h3>
+                <p className="text-gray-600">Control ball flight for specific situations</p>
+                <p className="text-sm text-gray-500">8 options</p>
               </div>
             </div>
             <ChevronRight className="w-6 h-6 text-gray-400" />
@@ -511,17 +717,6 @@ const QuickCaddieApp = () => {
           <div className="grid grid-cols-2 gap-4">
             {surfaces.map((surface) => {
               const IconComponent = surface.icon;
-              const colorClasses = {
-                emerald: 'bg-emerald-100 text-emerald-600',
-                green: 'bg-green-100 text-green-600',
-                amber: 'bg-amber-100 text-amber-600',
-                orange: 'bg-orange-100 text-orange-600',
-                yellow: 'bg-yellow-100 text-yellow-600',
-                red: 'bg-red-100 text-red-600',
-                stone: 'bg-stone-100 text-stone-600',
-                brown: 'bg-amber-100 text-amber-700'
-              };
-              
               return (
                 <button
                   key={surface.id}
@@ -529,7 +724,7 @@ const QuickCaddieApp = () => {
                   className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-[1.02] border border-gray-100"
                 >
                   <div className="text-center">
-                    <div className={`${colorClasses[surface.color]} rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center`}>
+                    <div className={`${getColorClass(surface.color)} rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center`}>
                       <IconComponent className="w-8 h-8" />
                     </div>
                     <h3 className="font-semibold text-gray-800 mb-2">{surface.name}</h3>
@@ -545,9 +740,128 @@ const QuickCaddieApp = () => {
 
   // Result screen matching the design
   const renderResult = () => {
-    const lie = selectedCategory === 'surface' ? selectedSurface : selectedSlope;
+    const lie = selectedLie; // Use the unified selectedLie
     const advice = dbQueries.getAdvice(lie.id);
     const IconComponent = lie.icon;
+
+    // Dynamically render advice based on lie type
+    const renderAdviceDetails = () => {
+      if (lie.type === 'shot_shape') {
+        return (
+          <div className="space-y-3 ml-4">
+            {advice.setup && (
+              <div className="flex items-start space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                <div>
+                  <strong className="text-gray-900">Setup:</strong>
+                  <span className="text-gray-700 ml-1">{advice.setup}</span>
+                </div>
+              </div>
+            )}
+            {advice.grip && (
+              <div className="flex items-start space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                <div>
+                  <strong className="text-gray-900">Grip:</strong>
+                  <span className="text-gray-700 ml-1">{advice.grip}</span>
+                </div>
+              </div>
+            )}
+            {advice.ball && (
+              <div className="flex items-start space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                <div>
+                  <strong className="text-gray-900">Ball Position:</strong>
+                  <span className="text-gray-700 ml-1">{advice.ball}</span>
+                </div>
+              </div>
+            )}
+            {advice.swing && (
+              <div className="flex items-start space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                <div>
+                  <strong className="text-gray-900">Swing:</strong>
+                  <span className="text-gray-700 ml-1">{advice.swing}</span>
+                </div>
+              </div>
+            )}
+            {advice.feel && (
+              <div className="flex items-start space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                <div>
+                  <strong className="text-gray-900">Feel:</strong>
+                  <span className="text-gray-700 ml-1">{advice.feel}</span>
+                </div>
+              </div>
+            )}
+            {advice.club && (
+              <div className="flex items-start space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                <div>
+                  <strong className="text-gray-900">Club:</strong>
+                  <span className="text-gray-700 ml-1">{advice.club}</span>
+                </div>
+              </div>
+            )}
+            {advice.follow && (
+              <div className="flex items-start space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                <div>
+                  <strong className="text-gray-900">Follow Through:</strong>
+                  <span className="text-gray-700 ml-1">{advice.follow}</span>
+                </div>
+              </div>
+            )}
+            {advice.best_for && (
+              <div className="flex items-start space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                <div>
+                  <strong className="text-gray-900">Best For:</strong>
+                  <span className="text-gray-700 ml-1">{advice.best_for}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      } else {
+        // Existing advice structure for surface and slope
+        return (
+          <div className="space-y-3 ml-4">
+            <div className="flex items-start space-x-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+              <div>
+                <strong className="text-gray-900">Setup:</strong>
+                <span className="text-gray-700 ml-1">{advice.setup}</span>
+              </div>
+            </div>
+            
+            <div className="flex items-start space-x-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+              <div>
+                <strong className="text-gray-900">Swing:</strong>
+                <span className="text-gray-700 ml-1">{advice.swing}</span>
+              </div>
+            </div>
+            
+            <div className="flex items-start space-x-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+              <div>
+                <strong className="text-gray-900">Club:</strong>
+                <span className="text-gray-700 ml-1">{advice.club}</span>
+              </div>
+            </div>
+            
+            <div className="flex items-start space-x-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+              <div>
+                <strong className="text-gray-900">Expected:</strong>
+                <span className="text-gray-700 ml-1">{advice.expected}</span>
+              </div>
+            </div>
+          </div>
+        );
+      }
+    };
 
     return (
       <div className="min-h-screen bg-gray-50">
@@ -586,42 +900,11 @@ const QuickCaddieApp = () => {
               
               <div className="space-y-4">
                 <div className="text-gray-800">
-                  <strong className="text-gray-900">Base Surface ({lie.name}):</strong>
+                  <strong className="text-gray-900">
+                    {lie.type === 'shot_shape' ? 'Shot Type' : 'Base Lie'} ({lie.name}):
+                  </strong>
                 </div>
-                
-                <div className="space-y-3 ml-4">
-                  <div className="flex items-start space-x-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                    <div>
-                      <strong className="text-gray-900">Setup:</strong>
-                      <span className="text-gray-700 ml-1">{advice.setup}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start space-x-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                    <div>
-                      <strong className="text-gray-900">Swing:</strong>
-                      <span className="text-gray-700 ml-1">{advice.swing}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start space-x-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                    <div>
-                      <strong className="text-gray-900">Club:</strong>
-                      <span className="text-gray-700 ml-1">{advice.club}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start space-x-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                    <div>
-                      <strong className="text-gray-900">Expected:</strong>
-                      <span className="text-gray-700 ml-1">{advice.expected}</span>
-                    </div>
-                  </div>
-                </div>
+                {renderAdviceDetails()}
               </div>
             </div>
 
@@ -698,13 +981,6 @@ const QuickCaddieApp = () => {
           <div className="grid grid-cols-2 gap-4 mb-6">
             {slopes.map((slope) => {
               const IconComponent = slope.icon;
-              const colorClasses = {
-                blue: 'bg-blue-100 text-blue-600',
-                indigo: 'bg-indigo-100 text-indigo-600',
-                cyan: 'bg-cyan-100 text-cyan-600',
-                purple: 'bg-purple-100 text-purple-600'
-              };
-              
               return (
                 <button
                   key={slope.id}
@@ -712,7 +988,7 @@ const QuickCaddieApp = () => {
                   className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-[1.02] border border-gray-100"
                 >
                   <div className="text-center">
-                    <div className={`${colorClasses[slope.color]} rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center`}>
+                    <div className={`${getColorClass(slope.color)} rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center`}>
                       <IconComponent className="w-8 h-8" />
                     </div>
                     <h3 className="font-semibold text-gray-800 mb-2">{slope.name}</h3>
@@ -1057,21 +1333,6 @@ const QuickCaddieApp = () => {
           <div className="grid grid-cols-2 gap-4">
             {lies.map((lie) => {
               const IconComponent = lie.icon;
-              const colorClasses = {
-                emerald: 'bg-emerald-100 text-emerald-600',
-                green: 'bg-green-100 text-green-600',
-                amber: 'bg-amber-100 text-amber-600',
-                orange: 'bg-orange-100 text-orange-600',
-                yellow: 'bg-yellow-100 text-yellow-600',
-                red: 'bg-red-100 text-red-600',
-                stone: 'bg-stone-100 text-stone-600',
-                brown: 'bg-amber-100 text-amber-700',
-                blue: 'bg-blue-100 text-blue-600',
-                indigo: 'bg-indigo-100 text-indigo-600',
-                cyan: 'bg-cyan-100 text-cyan-600',
-                purple: 'bg-purple-100 text-purple-600'
-              };
-              
               return (
                 <button
                   key={lie.id}
@@ -1079,7 +1340,46 @@ const QuickCaddieApp = () => {
                   className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-[1.02] border border-gray-100"
                 >
                   <div className="text-center">
-                    <div className={`${colorClasses[lie.color]} rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center`}>
+                    <div className={`${getColorClass(lie.color)} rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center`}>
+                      <IconComponent className="w-8 h-8" />
+                    </div>
+                    <h3 className="font-semibold text-gray-800">{lie.name}</h3>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderShotShapeCategory = () => {
+    const shotShapes = dbQueries.getAllShotShapes();
+
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-purple-500 text-white">
+          <div className="flex items-center px-4 py-4">
+            <button onClick={goHome} className="mr-4">
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+            <h1 className="text-2xl font-bold">Shot Shape</h1>
+          </div>
+        </div>
+
+        <div className="p-6">
+          <div className="grid grid-cols-2 gap-4">
+            {shotShapes.map((lie) => {
+              const IconComponent = lie.icon;
+              return (
+                <button
+                  key={lie.id}
+                  onClick={() => selectLie(lie)}
+                  className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-[1.02] border border-gray-100"
+                >
+                  <div className="text-center">
+                    <div className={`${getColorClass(lie.color)} rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center`}>
                       <IconComponent className="w-8 h-8" />
                     </div>
                     <h3 className="font-semibold text-gray-800">{lie.name}</h3>
@@ -1100,6 +1400,8 @@ const QuickCaddieApp = () => {
         return renderHome();
       case 'category':
         return renderCategory();
+      case 'shot-shape-category': // New case for shot shapes
+        return renderShotShapeCategory();
       case 'combo-surface':
         return renderComboSurface();
       case 'combo-slope':
@@ -1116,4 +1418,10 @@ const QuickCaddieApp = () => {
   return renderCurrentView();
 };
 
-ReactDOM.render(React.createElement(QuickCaddieApp), document.getElementById('root'));
+// Use createRoot for React 18 compatibility, ensuring it's only called once
+const container = document.getElementById('root');
+// Check if root already exists on the container to prevent re-initialization warnings
+if (!container._reactRoot) { 
+    container._reactRoot = ReactDOM.createRoot(container);
+}
+container._reactRoot.render(React.createElement(QuickCaddieApp));
