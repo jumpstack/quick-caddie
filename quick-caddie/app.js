@@ -1,16 +1,43 @@
-import React, { useState } from 'react';
-import { 
-  TreePine, 
-  Waves, 
-  Target, 
-  Compass, 
-  ArrowUp, 
-  ArrowDown, 
-  Mountain, 
-  Layers,
-  ArrowLeft,
-  ChevronRight
-} from 'lucide-react';
+const TreePine = () => React.createElement('svg', {
+    width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
+}, React.createElement('path', { d: 'm17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z' }), React.createElement('path', { d: 'M12 22V12' }));
+
+const Waves = () => React.createElement('svg', {
+    width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
+}, React.createElement('path', { d: 'M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1' }), React.createElement('path', { d: 'M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1' }), React.createElement('path', { d: 'M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1' }));
+
+const Target = () => React.createElement('svg', {
+    width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
+}, React.createElement('circle', { cx: 12, cy: 12, r: 10 }), React.createElement('circle', { cx: 12, cy: 12, r: 6 }), React.createElement('circle', { cx: 12, cy: 12, r: 2 }));
+
+const Compass = () => React.createElement('svg', {
+    width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
+}, React.createElement('circle', { cx: 12, cy: 12, r: 10 }), React.createElement('polygon', { points: '16.24,7.76 14.12,14.12 7.76,16.24 9.88,9.88' }));
+
+const ArrowUp = () => React.createElement('svg', {
+    width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
+}, React.createElement('path', { d: 'm5 12 7-7 7 7' }), React.createElement('path', { d: 'M12 19V5' }));
+
+const ArrowDown = () => React.createElement('svg', {
+    width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
+}, React.createElement('path', { d: 'm5 12 7 7 7-7' }), React.createElement('path', { d: 'M12 5v14' }));
+
+const Mountain = () => React.createElement('svg', {
+    width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
+}, React.createElement('path', { d: 'm8 3 4 8 5-5 5 15H2L8 3z' }));
+
+const Layers = () => React.createElement('svg', {
+    width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
+}, React.createElement('path', { d: 'm12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z' }), React.createElement('path', { d: 'm22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65' }), React.createElement('path', { d: 'm22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65' }));
+
+const ArrowLeft = () => React.createElement('svg', {
+    width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
+}, React.createElement('path', { d: 'm12 19-7-7 7-7' }), React.createElement('path', { d: 'M19 12H5' }));
+
+const ChevronRight = () => React.createElement('svg', {
+    width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
+}, React.createElement('path', { d: 'm9 18 6-6-6-6' }));
+
 
 // Database Architecture
 const liesDB = {
@@ -1087,7 +1114,5 @@ const QuickCaddieApp = () => {
 
   return renderCurrentView();
 };
-
-export default QuickCaddieApp;
 
 ReactDOM.render(React.createElement(QuickCaddieApp), document.getElementById('root'));
