@@ -250,6 +250,81 @@ const liesDB = {
       color: 'emerald',
       description: 'Low controlled escape shot to get back in play from trouble'
     }
+  },
+  // New Driver Quick Fix data structure
+  driver_quick_fixes: {
+    slice_fix: {
+      id: 'slice_fix',
+      name: 'Slice Fix',
+      type: 'driver_quick_fix',
+      difficulty_score: 1, // Arbitrary, as it's a fix, not a lie
+      icon: CornerRightUp,
+      color: 'red',
+      description: 'Ball curves left to right'
+    },
+    hook_fix: {
+      id: 'hook_fix',
+      name: 'Hook Fix',
+      type: 'driver_quick_fix',
+      difficulty_score: 1,
+      icon: CornerLeftUp,
+      color: 'rose',
+      description: 'Ball curves right to left'
+    },
+    popup_fix: {
+      id: 'popup_fix',
+      name: 'Pop-up Fix',
+      type: 'driver_quick_fix',
+      difficulty_score: 1,
+      icon: ArrowUp,
+      color: 'sky',
+      description: 'Ball goes extremely high, no distance'
+    },
+    topping_fix: {
+      id: 'topping_fix',
+      name: 'Topping Fix',
+      type: 'driver_quick_fix',
+      difficulty_score: 1,
+      icon: ArrowDown,
+      color: 'teal',
+      description: 'Ball rolls on ground'
+    },
+    fat_shot_fix: {
+      id: 'fat_shot_fix',
+      name: 'Fat Shot Fix',
+      type: 'driver_quick_fix',
+      difficulty_score: 1,
+      icon: Layers,
+      color: 'brown',
+      description: 'Hit ground before ball'
+    },
+    snap_hook_fix: {
+      id: 'snap_hook_fix',
+      name: 'Snap Hook Fix',
+      type: 'driver_quick_fix',
+      difficulty_score: 1,
+      icon: ArrowLeft,
+      color: 'purple',
+      description: 'Ball darts hard left immediately'
+    },
+    push_fix: {
+      id: 'push_fix',
+      name: 'Push Fix',
+      type: 'driver_quick_fix',
+      difficulty_score: 1,
+      icon: ArrowRight,
+      color: 'orange',
+      description: 'Ball flies straight right'
+    },
+    pull_fix: {
+      id: 'pull_fix',
+      name: 'Pull Fix',
+      type: 'driver_quick_fix',
+      difficulty_score: 1,
+      icon: Compass, // Using Compass for directional error
+      color: 'indigo',
+      description: 'Ball flies straight left'
+    }
   }
 };
 
@@ -426,11 +501,92 @@ const adviceDB = {
   punch_shot: {
     intermediate: {
       setup: "Narrow stance with feet close together, ball back",
-      swing: "Shortened backswing, focus on hitting down on ball",
+    swing: "Shortened backswing, focus on hitting down on ball",
       follow: "Abbreviated finish, keep hands ahead of clubhead",
       feel: "Punch down and through with authority, no scooping",
       best_for: "Under trees, from rough, getting back to fairway",
       description: "Low controlled escape shot to get back in play from trouble"
+    }
+  },
+  // Advice for Driver Quick Fixes
+  slice_fix: {
+    intermediate: {
+      steps: [
+        "Strengthen your grip - rotate both hands clockwise so you see 2-3 knuckles on left hand",
+        "Swing from inside-out - feel like you're hitting from 4 o'clock to 10 o'clock",
+        "Close clubface 2-3 degrees at address",
+        "Keep right shoulder lower than left at impact"
+      ]
+    }
+  },
+  hook_fix: {
+    intermediate: {
+      steps: [
+        "Weaken your grip - rotate hands counter-clockwise, see only 1-2 knuckles on left hand",
+        "Hold clubface open through impact, don't let wrists roll over",
+        "Feel like you're swinging slightly out-to-in",
+        "Keep left wrist flat at impact"
+      ]
+    }
+  },
+  popup_fix: {
+    intermediate: {
+      steps: [
+        "Tee ball so only 1/3 shows above driver crown",
+        "Set up with ball opposite left heel, not forward of it",
+        "Sweep ball off tee with level or slightly ascending blow",
+        "Keep spine tilted away from target at impact"
+      ]
+    }
+  },
+  topping_fix: {
+    intermediate: {
+      steps: [
+        "Keep eyes on back of ball until well after impact",
+        "Maintain original spine angle - don't stand up during swing",
+        "Feel like you're hitting the equator of the ball",
+        "Make practice swings brushing grass, not digging"
+      ]
+    }
+  },
+  fat_shot_fix: {
+    intermediate: {
+      steps: [
+        "Position ball off inside of left heel",
+        "60% of weight on right foot at address",
+        "Transfer weight to left side on downswing",
+        "Brush tee after ball contact, not before"
+      ]
+    }
+  },
+  snap_hook_fix: {
+    intermediate: {
+      steps: [
+        "Check grip pressure - hold club like holding a bird",
+        "Feel clubface stays square to swing path through impact",
+        "Swing at 80% speed for better control",
+        "Keep right palm facing target longer through impact"
+      ]
+    }
+  },
+  push_fix: {
+    intermediate: {
+      steps: [
+        "Actively rotate hips and shoulders through impact",
+        "Feel left hip clearing out of the way",
+        "Don't let arms get stuck behind body",
+        "Finish with belt buckle facing target"
+      ]
+    }
+  },
+  pull_fix: {
+    intermediate: {
+      steps: [
+        "Start downswing with lower body, not arms/shoulders",
+        "Feel club dropping behind you before coming through",
+        "Keep right elbow close to body on downswing",
+        "Let arms extend naturally through impact zone"
+      ]
     }
   }
 };
@@ -456,6 +612,7 @@ const dbQueries = {
     if (type === 'surface') return liesDB.surfaces[id];
     if (type === 'slope') return liesDB.slopes[id];
     if (type === 'shot_shape') return liesDB.shot_shapes[id];
+    if (type === 'driver_quick_fix') return liesDB.driver_quick_fixes[id]; // New type
     return null;
   },
   
@@ -483,7 +640,8 @@ const dbQueries = {
   
   getAllSurfaces: () => Object.values(liesDB.surfaces),
   getAllSlopes: () => Object.values(liesDB.slopes),
-  getAllShotShapes: () => Object.values(liesDB.shot_shapes)
+  getAllShotShapes: () => Object.values(liesDB.shot_shapes),
+  getAllDriverQuickFixes: () => Object.values(liesDB.driver_quick_fixes) // New getter
 };
 
 const QuickCaddieApp = () => {
@@ -537,6 +695,8 @@ const QuickCaddieApp = () => {
       setComboStep('surface');
     } else if (category === 'shot_shape') {
       setCurrentView('shot-shape-category');
+    } else if (category === 'driver_quick_fix') { // New category
+      setCurrentView('driver-quick-fix-category');
     }
     else {
       setCurrentView('category');
@@ -654,21 +814,26 @@ const QuickCaddieApp = () => {
             <ChevronRight className="w-6 h-6 text-gray-400" />
           </div>
         </button>
-      </div>
 
-      {/* Info box */}
-      <div className="mx-6 mb-8">
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-          <div className="flex items-start space-x-2">
-            <span className="text-blue-600 text-lg">💡</span>
-            <div>
-              <h4 className="font-semibold text-blue-900 mb-1">New Feature: Combo Lies</h4>
-              <p className="text-blue-800 text-sm">
-                Real golf involves multiple factors! Try "Build a Combo" to select both surface conditions AND slope for more realistic, comprehensive advice.
-              </p>
+        {/* New Driver Quick Fix button */}
+        <button
+          onClick={() => selectCategory('driver_quick_fix')}
+          className="w-full bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] md:col-span-2" // Span full width on md and up
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center">
+                <Compass className="w-6 h-6 text-blue-600" /> {/* Using Compass for Driver Quick Fix category icon */}
+              </div>
+              <div className="text-left">
+                <h3 className="text-xl font-semibold text-gray-800">Driver Quick Fix</h3>
+                <p className="text-gray-600">Fast solutions for common driver issues</p>
+                <p className="text-sm text-gray-500">8 options</p>
+              </div>
             </div>
+            <ChevronRight className="w-6 h-6 text-gray-400" />
           </div>
-        </div>
+        </button>
       </div>
     </div>
   );
@@ -823,7 +988,19 @@ const QuickCaddieApp = () => {
             )}
           </div>
         );
-      } else {
+      } else if (lie.type === 'driver_quick_fix') { // New branch for driver quick fixes
+        return (
+          <div className="space-y-3 ml-4">
+            {advice.steps && advice.steps.map((step, index) => (
+              <div key={index} className="flex items-start space-x-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                <p className="text-gray-700">{step}</p>
+              </div>
+            ))}
+          </div>
+        );
+      }
+      else {
         // Existing advice structure for surface and slope
         return (
           <div className="space-y-3 ml-4">
@@ -895,15 +1072,12 @@ const QuickCaddieApp = () => {
 
           {/* Advice section */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div className="border-l-4 border-green-500 p-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">How to Play This Shot</h3>
+            <div className={`border-l-4 ${lie.type === 'driver_quick_fix' ? 'border-blue-500' : 'border-green-500'} p-6`}>
+              <h3 className="text-xl font-bold text-gray-800 mb-4">
+                {lie.type === 'driver_quick_fix' ? 'Quick Fix Steps' : 'How to Play This Shot'}
+              </h3>
               
               <div className="space-y-4">
-                <div className="text-gray-800">
-                  <strong className="text-gray-900">
-                    {lie.type === 'shot_shape' ? 'Shot Type' : 'Base Lie'} ({lie.name}):
-                  </strong>
-                </div>
                 {renderAdviceDetails()}
               </div>
             </div>
@@ -1393,6 +1567,46 @@ const QuickCaddieApp = () => {
     );
   };
 
+  // New render function for Driver Quick Fix category
+  const renderDriverQuickFixCategory = () => {
+    const quickFixes = dbQueries.getAllDriverQuickFixes();
+
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-blue-500 text-white"> {/* Changed header color for this category */}
+          <div className="flex items-center px-4 py-4">
+            <button onClick={goHome} className="mr-4">
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+            <h1 className="text-2xl font-bold">Driver Quick Fix</h1>
+          </div>
+        </div>
+
+        <div className="p-6">
+          <div className="grid grid-cols-2 gap-4">
+            {quickFixes.map((fix) => {
+              const IconComponent = fix.icon;
+              return (
+                <button
+                  key={fix.id}
+                  onClick={() => selectLie(fix)}
+                  className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-[1.02] border border-gray-100"
+                >
+                  <div className="text-center">
+                    <div className={`${getColorClass(fix.color)} rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center`}>
+                      <IconComponent className="w-8 h-8" />
+                    </div>
+                    <h3 className="font-semibold text-gray-800">{fix.name}</h3>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // Main render logic
   const renderCurrentView = () => {
     switch (currentView) {
@@ -1400,8 +1614,10 @@ const QuickCaddieApp = () => {
         return renderHome();
       case 'category':
         return renderCategory();
-      case 'shot-shape-category': // New case for shot shapes
+      case 'shot-shape-category':
         return renderShotShapeCategory();
+      case 'driver-quick-fix-category': // New case for driver quick fixes
+        return renderDriverQuickFixCategory();
       case 'combo-surface':
         return renderComboSurface();
       case 'combo-slope':
