@@ -62,6 +62,10 @@ const ChevronRight = () => React.createElement('svg', {
     width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
 }, React.createElement('path', { d: 'm9 18 6-6-6-6' }));
 
+const Music = () => React.createElement('svg', {
+    width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2
+}, React.createElement('path', { d: 'M9 18V5l12-2v13' }), React.createElement('circle', { cx: 6, cy: 18, r: 3 }), React.createElement('circle', { cx: 18, cy: 16, r: 3 }));
+
 
 // Database Architecture
 const liesDB = {
@@ -652,6 +656,12 @@ const QuickCaddieApp = () => {
   const [selectedSlope, setSelectedSlope] = useState(null);
   const [comboStep, setComboStep] = useState('surface');
 
+  // Tempo player state
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentBeat, setCurrentBeat] = useState(0);
+  const [tempoType, setTempoType] = useState('3:1'); // '3:1', '2:1', 'even'
+  const [bpm, setBpm] = useState(60);
+
   // Helper function for color classes
   const getColorClass = (color) => {
     const colorClasses = {
@@ -686,6 +696,9 @@ const QuickCaddieApp = () => {
     setSelectedSurface(null);
     setSelectedSlope(null);
     setComboStep('surface');
+    // Reset tempo player state
+    setIsPlaying(false);
+    setCurrentBeat(0);
   };
 
   const selectCategory = (category) => {
@@ -818,7 +831,7 @@ const QuickCaddieApp = () => {
         {/* New Driver Quick Fix button */}
         <button
           onClick={() => selectCategory('driver_quick_fix')}
-          className="w-full bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] md:col-span-2" // Span full width on md and up
+          className="w-full bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -829,6 +842,26 @@ const QuickCaddieApp = () => {
                 <h3 className="text-xl font-semibold text-gray-800">Driver Quick Fix</h3>
                 <p className="text-gray-600">Fast solutions for common driver issues</p>
                 <p className="text-sm text-gray-500">8 options</p>
+              </div>
+            </div>
+            <ChevronRight className="w-6 h-6 text-gray-400" />
+          </div>
+        </button>
+
+        {/* Swing Tempo Player button */}
+        <button
+          onClick={() => { setCurrentView('tempo-player'); setSelectedCategory('tempo'); }}
+          className="w-full bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="bg-pink-100 rounded-full w-12 h-12 flex items-center justify-center">
+                <Music className="w-6 h-6 text-pink-600" />
+              </div>
+              <div className="text-left">
+                <h3 className="text-xl font-semibold text-gray-800">Swing Tempo</h3>
+                <p className="text-gray-600">Practice swing rhythm with audio metronome</p>
+                <p className="text-sm text-gray-500">Multiple tempo options</p>
               </div>
             </div>
             <ChevronRight className="w-6 h-6 text-gray-400" />
@@ -1567,6 +1600,267 @@ const QuickCaddieApp = () => {
     );
   };
 
+  // Tempo Player Component
+  const renderTempoPlayer = () => {
+    const { useEffect, useRef } = React;
+
+    // Refs for audio context and interval
+    const audioContextRef = useRef(null);
+    const intervalRef = useRef(null);
+    const beatCountRef = useRef(0);
+
+    // Get tempo pattern based on type
+    const getTempoPattern = () => {
+      switch (tempoType) {
+        case '3:1':
+          return [1, 0.6, 0.6, 0.9]; // Backswing (3 beats) + Downswing (1 beat)
+        case '2:1':
+          return [1, 0.6, 0.9]; // Backswing (2 beats) + Downswing (1 beat)
+        case 'even':
+          return [1, 0.6, 0.6, 0.6]; // 4 even beats
+        default:
+          return [1, 0.6, 0.6, 0.9];
+      }
+    };
+
+    // Play beep sound
+    const playBeep = (volume = 0.3, frequency = 800) => {
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      const audioContext = audioContextRef.current;
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      oscillator.frequency.value = frequency;
+      oscillator.type = 'sine';
+
+      gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.1);
+    };
+
+    // Start/stop tempo
+    const toggleTempo = () => {
+      if (isPlaying) {
+        // Stop
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+        setIsPlaying(false);
+        setCurrentBeat(0);
+        beatCountRef.current = 0;
+      } else {
+        // Start
+        const pattern = getTempoPattern();
+        const interval = (60 / bpm) * 1000;
+
+        beatCountRef.current = 0;
+        setCurrentBeat(0);
+
+        // Play first beat immediately
+        playBeep(pattern[0], pattern[0] === 1 ? 1000 : 800);
+        setCurrentBeat(0);
+
+        intervalRef.current = setInterval(() => {
+          beatCountRef.current = (beatCountRef.current + 1) % pattern.length;
+          const beat = beatCountRef.current;
+          setCurrentBeat(beat);
+          playBeep(pattern[beat], pattern[beat] === 1 ? 1000 : 800);
+        }, interval);
+
+        setIsPlaying(true);
+      }
+    };
+
+    // Cleanup on unmount or when stopping
+    React.useEffect(() => {
+      return () => {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
+      };
+    }, []);
+
+    // Restart tempo when BPM or tempo type changes
+    React.useEffect(() => {
+      if (isPlaying) {
+        toggleTempo(); // Stop
+        setTimeout(() => toggleTempo(), 100); // Restart
+      }
+    }, [bpm, tempoType]);
+
+    const pattern = getTempoPattern();
+    const beatLabels = {
+      '3:1': ['1', '2', '3', 'Down'],
+      '2:1': ['1', '2', 'Down'],
+      'even': ['1', '2', '3', '4']
+    };
+
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <div className="bg-pink-500 text-white">
+          <div className="flex items-center px-4 py-4">
+            <button onClick={goHome} className="mr-4">
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+            <div>
+              <h1 className="text-2xl font-bold">Swing Tempo Player</h1>
+              <p className="text-pink-100">Practice your swing rhythm</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 space-y-6">
+          {/* Instructions */}
+          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-xl">
+            <h4 className="font-semibold text-blue-800 mb-2">How to Use</h4>
+            <p className="text-blue-700 text-sm">
+              Select your tempo type, adjust BPM, and press play. The metronome will guide your swing rhythm.
+              Listen for the accent beat (higher pitch) to mark the transition to downswing.
+            </p>
+          </div>
+
+          {/* Tempo Type Selection */}
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">Tempo Type</h3>
+            <div className="grid grid-cols-3 gap-3">
+              <button
+                onClick={() => setTempoType('3:1')}
+                className={`py-3 px-4 rounded-lg font-semibold transition-all ${
+                  tempoType === '3:1'
+                    ? 'bg-pink-500 text-white shadow-md'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                3:1
+                <div className="text-xs font-normal mt-1">Classic</div>
+              </button>
+              <button
+                onClick={() => setTempoType('2:1')}
+                className={`py-3 px-4 rounded-lg font-semibold transition-all ${
+                  tempoType === '2:1'
+                    ? 'bg-pink-500 text-white shadow-md'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                2:1
+                <div className="text-xs font-normal mt-1">Quick</div>
+              </button>
+              <button
+                onClick={() => setTempoType('even')}
+                className={`py-3 px-4 rounded-lg font-semibold transition-all ${
+                  tempoType === 'even'
+                    ? 'bg-pink-500 text-white shadow-md'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Even
+                <div className="text-xs font-normal mt-1">Practice</div>
+              </button>
+            </div>
+          </div>
+
+          {/* BPM Control */}
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-gray-800">Speed (BPM)</h3>
+              <span className="text-3xl font-bold text-pink-500">{bpm}</span>
+            </div>
+            <input
+              type="range"
+              min="40"
+              max="120"
+              value={bpm}
+              onChange={(e) => setBpm(parseInt(e.target.value))}
+              className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              style={{
+                background: `linear-gradient(to right, #ec4899 0%, #ec4899 ${((bpm - 40) / 80) * 100}%, #e5e7eb ${((bpm - 40) / 80) * 100}%, #e5e7eb 100%)`
+              }}
+            />
+            <div className="flex justify-between text-sm text-gray-500 mt-2">
+              <span>Slow (40)</span>
+              <span>Fast (120)</span>
+            </div>
+          </div>
+
+          {/* Visual Beat Indicator */}
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">Beat Indicator</h3>
+            <div className="flex justify-center items-center space-x-3">
+              {pattern.map((intensity, index) => (
+                <div
+                  key={index}
+                  className={`flex flex-col items-center transition-all duration-150 ${
+                    isPlaying && currentBeat === index ? 'scale-110' : ''
+                  }`}
+                >
+                  <div
+                    className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-150 ${
+                      isPlaying && currentBeat === index
+                        ? intensity === 1
+                          ? 'bg-pink-500 shadow-lg scale-110'
+                          : 'bg-pink-400 shadow-md scale-110'
+                        : 'bg-gray-200'
+                    }`}
+                  >
+                    <span
+                      className={`font-bold text-lg ${
+                        isPlaying && currentBeat === index ? 'text-white' : 'text-gray-500'
+                      }`}
+                    >
+                      {beatLabels[tempoType][index]}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Play/Stop Button */}
+          <button
+            onClick={toggleTempo}
+            className={`w-full py-6 px-6 rounded-xl font-bold text-xl transition-all shadow-lg ${
+              isPlaying
+                ? 'bg-red-500 hover:bg-red-600 text-white'
+                : 'bg-pink-500 hover:bg-pink-600 text-white'
+            }`}
+          >
+            {isPlaying ? 'Stop' : 'Start Tempo'}
+          </button>
+
+          {/* Tempo Descriptions */}
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">Tempo Guide</h3>
+            <div className="space-y-3">
+              <div className="border-l-4 border-pink-500 pl-4">
+                <h4 className="font-semibold text-gray-800">3:1 Tempo (Classic)</h4>
+                <p className="text-sm text-gray-600">Three beats for backswing, one for downswing. Most common tour tempo.</p>
+              </div>
+              <div className="border-l-4 border-pink-400 pl-4">
+                <h4 className="font-semibold text-gray-800">2:1 Tempo (Quick)</h4>
+                <p className="text-sm text-gray-600">Two beats for backswing, one for downswing. Faster, more aggressive tempo.</p>
+              </div>
+              <div className="border-l-4 border-pink-300 pl-4">
+                <h4 className="font-semibold text-gray-800">Even Tempo (Practice)</h4>
+                <p className="text-sm text-gray-600">Four even beats. Great for beginners learning smooth rhythm.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // New render function for Driver Quick Fix category
   const renderDriverQuickFixCategory = () => {
     const quickFixes = dbQueries.getAllDriverQuickFixes();
@@ -1618,6 +1912,8 @@ const QuickCaddieApp = () => {
         return renderShotShapeCategory();
       case 'driver-quick-fix-category': // New case for driver quick fixes
         return renderDriverQuickFixCategory();
+      case 'tempo-player': // New case for tempo player
+        return renderTempoPlayer();
       case 'combo-surface':
         return renderComboSurface();
       case 'combo-slope':
