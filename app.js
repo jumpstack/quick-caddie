@@ -662,6 +662,86 @@ const QuickCaddieApp = () => {
   const [tempoType, setTempoType] = useState('3:1'); // '3:1', '2:1', 'even'
   const [bpm, setBpm] = useState(60);
 
+  // Tempo player refs - moved to top level
+  const audioContextRef = React.useRef(null);
+  const intervalRef = React.useRef(null);
+  const beatCountRef = React.useRef(0);
+
+  // Tempo player helper functions
+  const getTempoPattern = () => {
+    switch (tempoType) {
+      case '3:1':
+        return [1, 0.6, 0.6, 0.9];
+      case '2:1':
+        return [1, 0.6, 0.9];
+      case 'even':
+        return [1, 0.6, 0.6, 0.6];
+      default:
+        return [1, 0.6, 0.6, 0.9];
+    }
+  };
+
+  const playBeep = (volume = 0.3, frequency = 800) => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    const audioContext = audioContextRef.current;
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.frequency.value = frequency;
+    oscillator.type = 'sine';
+
+    gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.1);
+  };
+
+  const toggleTempo = () => {
+    if (isPlaying) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      setIsPlaying(false);
+      setCurrentBeat(0);
+      beatCountRef.current = 0;
+    } else {
+      const pattern = getTempoPattern();
+      const interval = (60 / bpm) * 1000;
+
+      beatCountRef.current = 0;
+      setCurrentBeat(0);
+
+      playBeep(pattern[0], pattern[0] === 1 ? 1000 : 800);
+      setCurrentBeat(0);
+
+      intervalRef.current = setInterval(() => {
+        beatCountRef.current = (beatCountRef.current + 1) % pattern.length;
+        const beat = beatCountRef.current;
+        setCurrentBeat(beat);
+        playBeep(pattern[beat], pattern[beat] === 1 ? 1000 : 800);
+      }, interval);
+
+      setIsPlaying(true);
+    }
+  };
+
+  // Cleanup effect for tempo player
+  React.useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
   // Helper function for color classes
   const getColorClass = (color) => {
     const colorClasses = {
@@ -690,6 +770,11 @@ const QuickCaddieApp = () => {
 
   // Navigation functions
   const goHome = () => {
+    // Stop tempo player if playing
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
     setCurrentView('home');
     setSelectedCategory(null);
     setSelectedLie(null);
@@ -699,6 +784,7 @@ const QuickCaddieApp = () => {
     // Reset tempo player state
     setIsPlaying(false);
     setCurrentBeat(0);
+    beatCountRef.current = 0;
   };
 
   const selectCategory = (category) => {
@@ -1602,101 +1688,6 @@ const QuickCaddieApp = () => {
 
   // Tempo Player Component
   const renderTempoPlayer = () => {
-    const { useEffect, useRef } = React;
-
-    // Refs for audio context and interval
-    const audioContextRef = useRef(null);
-    const intervalRef = useRef(null);
-    const beatCountRef = useRef(0);
-
-    // Get tempo pattern based on type
-    const getTempoPattern = () => {
-      switch (tempoType) {
-        case '3:1':
-          return [1, 0.6, 0.6, 0.9]; // Backswing (3 beats) + Downswing (1 beat)
-        case '2:1':
-          return [1, 0.6, 0.9]; // Backswing (2 beats) + Downswing (1 beat)
-        case 'even':
-          return [1, 0.6, 0.6, 0.6]; // 4 even beats
-        default:
-          return [1, 0.6, 0.6, 0.9];
-      }
-    };
-
-    // Play beep sound
-    const playBeep = (volume = 0.3, frequency = 800) => {
-      if (!audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
-      }
-
-      const audioContext = audioContextRef.current;
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-
-      oscillator.frequency.value = frequency;
-      oscillator.type = 'sine';
-
-      gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.1);
-    };
-
-    // Start/stop tempo
-    const toggleTempo = () => {
-      if (isPlaying) {
-        // Stop
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
-        }
-        setIsPlaying(false);
-        setCurrentBeat(0);
-        beatCountRef.current = 0;
-      } else {
-        // Start
-        const pattern = getTempoPattern();
-        const interval = (60 / bpm) * 1000;
-
-        beatCountRef.current = 0;
-        setCurrentBeat(0);
-
-        // Play first beat immediately
-        playBeep(pattern[0], pattern[0] === 1 ? 1000 : 800);
-        setCurrentBeat(0);
-
-        intervalRef.current = setInterval(() => {
-          beatCountRef.current = (beatCountRef.current + 1) % pattern.length;
-          const beat = beatCountRef.current;
-          setCurrentBeat(beat);
-          playBeep(pattern[beat], pattern[beat] === 1 ? 1000 : 800);
-        }, interval);
-
-        setIsPlaying(true);
-      }
-    };
-
-    // Cleanup on unmount or when stopping
-    React.useEffect(() => {
-      return () => {
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-        }
-      };
-    }, []);
-
-    // Restart tempo when BPM or tempo type changes
-    React.useEffect(() => {
-      if (isPlaying) {
-        toggleTempo(); // Stop
-        setTimeout(() => toggleTempo(), 100); // Restart
-      }
-    }, [bpm, tempoType]);
-
     const pattern = getTempoPattern();
     const beatLabels = {
       '3:1': ['1', '2', '3', 'Down'],
