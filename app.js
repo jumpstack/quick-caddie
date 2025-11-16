@@ -740,8 +740,8 @@ const QuickCaddieApp = () => {
         }, time);
       });
 
-      // Loop the sequence - wait for last beat plus a pause before repeating
-      const totalTime = beatTimes[beatTimes.length - 1] + (1000 * speedMultiplier);
+      // Loop the sequence - wait for last beat plus a 2-second pause before repeating
+      const totalTime = beatTimes[beatTimes.length - 1] + (2000 * speedMultiplier);
       intervalRef.current = setInterval(() => {
         beatCountRef.current = 0;
         setCurrentBeat(0);
