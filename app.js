@@ -1828,12 +1828,14 @@ const QuickCaddieApp = () => {
                         ? intensity === 1
                           ? 'bg-pink-500 shadow-lg scale-110'
                           : 'bg-pink-400 shadow-md scale-110'
-                        : 'bg-gray-200'
+                        : intensity === 1
+                          ? 'bg-pink-300'
+                          : 'bg-pink-200'
                     }`}
                   >
                     <span
-                      className={`font-bold text-lg ${
-                        isPlaying && currentBeat === index ? 'text-white' : 'text-gray-500'
+                      className={`font-bold text-sm ${
+                        isPlaying && currentBeat === index ? 'text-white' : 'text-pink-700'
                       }`}
                     >
                       {beatLabels[tempoType][index]}
