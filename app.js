@@ -660,7 +660,7 @@ const QuickCaddieApp = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentBeat, setCurrentBeat] = useState(0);
   const [tempoType, setTempoType] = useState('3:1'); // '3:1', '2:1', 'even'
-  const [bpm, setBpm] = useState(60);
+  const [bpm, setBpm] = useState(80);
 
   // Tempo player refs - moved to top level
   const audioContextRef = React.useRef(null);
