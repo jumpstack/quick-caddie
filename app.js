@@ -948,8 +948,8 @@ const QuickCaddieApp = () => {
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center">
-                <Compass className="w-6 h-6 text-blue-600" /> {/* Using Compass for Driver Quick Fix category icon */}
+              <div className="bg-red-100 rounded-full w-12 h-12 flex items-center justify-center">
+                <Compass className="w-6 h-6 text-red-600" />
               </div>
               <div className="text-left">
                 <h3 className="text-xl font-semibold text-gray-800">Driver Quick Fix</h3>
