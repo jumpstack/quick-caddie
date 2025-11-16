@@ -671,13 +671,13 @@ const QuickCaddieApp = () => {
   const getTempoPattern = () => {
     switch (tempoType) {
       case '3:1':
-        return [1, 0.6, 0.6, 0.9];
+        return [1, 0.7, 0.9]; // Start, Top, Impact - 3 beats
       case '2:1':
-        return [1, 0.6, 0.9];
+        return [1, 0.7, 0.9]; // Start, Top, Impact - 3 beats
       case 'even':
-        return [1, 0.6, 0.6, 0.6];
+        return [1, 0.6, 0.6, 0.6]; // 4 even beats
       default:
-        return [1, 0.6, 0.6, 0.9];
+        return [1, 0.7, 0.9];
     }
   };
 
@@ -713,21 +713,48 @@ const QuickCaddieApp = () => {
       setCurrentBeat(0);
       beatCountRef.current = 0;
     } else {
+      // Custom timing for each tempo type (in milliseconds)
+      // Adjusted by BPM - BPM 60 = normal speed, higher BPM = faster
+      const speedMultiplier = 60 / bpm;
+      const timings = {
+        '3:1': [0, 1000 * speedMultiplier, 1500 * speedMultiplier], // Start, 1s to top, 0.5s to impact
+        '2:1': [0, 800 * speedMultiplier, 1200 * speedMultiplier], // Start, 0.8s to top, 0.4s to impact
+        'even': [0, 750 * speedMultiplier, 1500 * speedMultiplier, 2250 * speedMultiplier] // 4 even beats
+      };
+
+      const beatTimes = timings[tempoType];
       const pattern = getTempoPattern();
-      const interval = (60 / bpm) * 1000;
 
       beatCountRef.current = 0;
       setCurrentBeat(0);
 
+      // Play first beat immediately
       playBeep(pattern[0], pattern[0] === 1 ? 1000 : 800);
-      setCurrentBeat(0);
 
+      // Schedule remaining beats
+      beatTimes.slice(1).forEach((time, index) => {
+        setTimeout(() => {
+          const beatIndex = index + 1;
+          setCurrentBeat(beatIndex);
+          playBeep(pattern[beatIndex], pattern[beatIndex] === 1 ? 1000 : 800);
+        }, time);
+      });
+
+      // Loop the sequence - wait for last beat plus a pause before repeating
+      const totalTime = beatTimes[beatTimes.length - 1] + (1000 * speedMultiplier);
       intervalRef.current = setInterval(() => {
-        beatCountRef.current = (beatCountRef.current + 1) % pattern.length;
-        const beat = beatCountRef.current;
-        setCurrentBeat(beat);
-        playBeep(pattern[beat], pattern[beat] === 1 ? 1000 : 800);
-      }, interval);
+        beatCountRef.current = 0;
+        setCurrentBeat(0);
+        playBeep(pattern[0], pattern[0] === 1 ? 1000 : 800);
+
+        beatTimes.slice(1).forEach((time, index) => {
+          setTimeout(() => {
+            const beatIndex = index + 1;
+            setCurrentBeat(beatIndex);
+            playBeep(pattern[beatIndex], pattern[beatIndex] === 1 ? 1000 : 800);
+          }, time);
+        });
+      }, totalTime);
 
       setIsPlaying(true);
     }
@@ -1690,8 +1717,8 @@ const QuickCaddieApp = () => {
   const renderTempoPlayer = () => {
     const pattern = getTempoPattern();
     const beatLabels = {
-      '3:1': ['1', '2', '3', 'Down'],
-      '2:1': ['1', '2', 'Down'],
+      '3:1': ['Start', 'Top', 'Impact'],
+      '2:1': ['Start', 'Top', 'Impact'],
       'even': ['1', '2', '3', '4']
     };
 
@@ -1835,15 +1862,15 @@ const QuickCaddieApp = () => {
             <div className="space-y-3">
               <div className="border-l-4 border-pink-500 pl-4">
                 <h4 className="font-semibold text-gray-800">3:1 Tempo (Classic)</h4>
-                <p className="text-sm text-gray-600">Three beats for backswing, one for downswing. Most common tour tempo.</p>
+                <p className="text-sm text-gray-600">Start → Top (1 second) → Impact (0.5 seconds). Most common tour tempo.</p>
               </div>
               <div className="border-l-4 border-pink-400 pl-4">
                 <h4 className="font-semibold text-gray-800">2:1 Tempo (Quick)</h4>
-                <p className="text-sm text-gray-600">Two beats for backswing, one for downswing. Faster, more aggressive tempo.</p>
+                <p className="text-sm text-gray-600">Start → Top (0.8 seconds) → Impact (0.4 seconds). Faster, more aggressive tempo.</p>
               </div>
               <div className="border-l-4 border-pink-300 pl-4">
                 <h4 className="font-semibold text-gray-800">Even Tempo (Practice)</h4>
-                <p className="text-sm text-gray-600">Four even beats. Great for beginners learning smooth rhythm.</p>
+                <p className="text-sm text-gray-600">Four even beats at 0.75 second intervals. Great for beginners learning smooth rhythm.</p>
               </div>
             </div>
           </div>
